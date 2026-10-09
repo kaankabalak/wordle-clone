@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import "./Wordle.css";
 
-const BLANK_TEXT = "     ";
+const BLANK_GUESS = Array(5).fill({ letter: " ", color: "" });
 
 const WORD = "RAPID";
 
 function Wordle() {
-  const [guesses, setGuesses] = useState(Array(6).fill(BLANK_TEXT));
+  const [guesses, setGuesses] = useState(Array(6).fill(BLANK_GUESS));
   const [letters, setLetters] = useState({
     first: {
       Q: "",
@@ -41,8 +41,8 @@ function Wordle() {
       M: "",
     },
   });
+  const [row, setRow] = useState(0);
 
-  const currentRow = useRef(0);
   const currentLetter = useRef(0);
 
   useEffect(() => {
@@ -70,9 +70,9 @@ function Wordle() {
     setGuesses((guesses) => {
       let letterEntered = false;
       return guesses.map((guess, guessIdx) => {
-        if (guessIdx === currentRow.current) {
-          return [...guess]
-            .map((letter, letterIdx) => {
+        if (guessIdx === row) {
+          return guess
+            .map((letterObj, letterIdx) => {
               if (
                 !letterEntered &&
                 letterIdx ===
@@ -83,16 +83,15 @@ function Wordle() {
                 letterEntered = true;
                 if (type === "add") {
                   currentLetter.current++;
-                  return l;
+                  return {...letterObj, letter: l};
                 } else if (type === "remove") {
                   currentLetter.current--;
-                  return " ";
+                  return {...letterObj, letter: " "};
                 }
               } else {
-                return letter;
+                return {...letterObj};
               }
-            })
-            .join("");
+            });
         } else {
           return guess;
         }
@@ -108,7 +107,23 @@ function Wordle() {
     changeLetter("remove");
   }
 
-  function changeLetterColor(letter, color) {
+  function changeLetterColor(letter, color, index) {
+    setGuesses(guesses => {
+      return guesses.map((guess, guessIdx) => {
+        if (guessIdx === row) {
+          return guess.map((guessLetter, letterIdx) => {
+            if (letterIdx === index) {
+              return {...guessLetter, color: color};
+            } else {
+              return {...guessLetter};
+            }
+          });
+        } else {
+          return guess;
+        }
+      });
+    });
+
     setLetters((letters) => {
       if (letters.first[letter] !== undefined) {
         return {
@@ -132,18 +147,32 @@ function Wordle() {
   function checkGuess() {
     let result = Array(5).fill("gray");
     let wordCopy = WORD;
-    let guessCopy = guesses[currentRow.current];
-    let remainingLetters = guesses[currentRow.current];
+    let guessCopy = guesses[row].map(letterObj => letterObj.letter).join("");
+    let remainingLetters = guessCopy;
     for (let i = 0; i < guessCopy.length; i++) {
       const indexResult = wordCopy.indexOf(guessCopy[i]);
       if (i === indexResult) {
         result[i] = "green";
         wordCopy = wordCopy.replace(wordCopy[indexResult], " ");
-        remainingLetters = remainingLetters.replaceAll(
-          remainingLetters[i],
-          " ",
-        );
-        changeLetterColor(guessCopy[i], "green");
+
+        const multipleIndexArr = [...remainingLetters.matchAll(new RegExp(remainingLetters[i], "g"))].map(match => match.index);
+
+        // loop through multiple index array to mark duplicates of letter as gray
+        for (let j = 0; j < multipleIndexArr.length; j++) {
+          if (i === multipleIndexArr[j]) {
+            remainingLetters = remainingLetters.replace(
+              remainingLetters[multipleIndexArr[j]],
+              " ",
+            );
+            changeLetterColor(guessCopy[multipleIndexArr[j]], "green", multipleIndexArr[j]);
+          } else {
+            remainingLetters = remainingLetters.replace(
+              remainingLetters[multipleIndexArr[j]],
+              " ",
+            );
+            changeLetterColor(guessCopy[multipleIndexArr[j]], "gray", multipleIndexArr[j]);
+          }
+        }
       }
     }
 
@@ -152,24 +181,33 @@ function Wordle() {
       if (indexResult > -1) {
         result[i] = "yellow";
         remainingLetters = remainingLetters.replace(remainingLetters[i], " ");
-        changeLetterColor(guessCopy[i], "yellow");
+        changeLetterColor(guessCopy[i], "yellow", i);
       }
     }
 
     for (let i = 0; i < remainingLetters.length; i++) {
       if (remainingLetters[i] !== " ") {
-        changeLetterColor(remainingLetters[i], "gray");
+        changeLetterColor(remainingLetters[i], "gray", i);
       }
+    }
+
+    if (remainingLetters === "     ") {
+      return true;
+    } else {
+      return false;
     }
   }
 
   function submitGuess() {
     if (currentLetter.current === 5) {
       currentLetter.current = 0;
-      if (currentRow.current < 5) {
+      if (row < 5) {
         // check guess, if not increase row
-        checkGuess();
-        currentRow.current++;
+        const result = checkGuess();
+        setRow(row => row + 1);
+        if (result) {
+          alert("You win!");
+        }
       } else {
         // you lose
       }
@@ -195,18 +233,14 @@ function Wordle() {
       {guesses.map((guess, guessIdx) => {
         return (
           <div className="row" key={"row-" + guessIdx}>
-            {[...guess].map((letter, letterIdx) => {
-              const letterColor =
-                letters.first[letter] ||
-                letters.second[letter] ||
-                letters.third[letter] ||
-                "";
+            {[...guess].map((letterObj, letterIdx) => {
+              // only color guessIdx < row
               return (
                 <div
-                  className={`box ${letter === " " ? "box-empty" : ""} ${guessIdx < currentRow.current ? "letter-" + letterColor : ""}`}
+                  className={`box ${letterObj.letter === " " ? "box-empty" : ""} ${(guessIdx < row && letterObj.color !== "") ? "letter-" + letterObj.color : ""}`}
                   key={"box-" + guessIdx + "-" + letterIdx}
                 >
-                  {letter.toUpperCase()}
+                  {letterObj.letter.toUpperCase()}
                 </div>
               );
             })}
