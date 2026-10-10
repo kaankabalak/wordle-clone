@@ -1,0 +1,22 @@
+.modal {
+  max-width: 500px;
+  width: 100%;
+  padding: 40px 35px;
+  position: relative;
+  border: none;
+}
+
+.button {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 30px;
+}
+
+.button:focus-visible {
+  outline: none;
+  box-shadow: none;
+}

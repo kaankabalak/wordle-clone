@@ -1,0 +1,70 @@
+h1 {
+  letter-spacing: 0;
+  font-size: 32px;
+  margin: 0 0 15px;
+  line-height: 32px;
+  font-weight: 700;
+}
+
+p:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+ul {
+  padding-left: 30px;
+  margin: 15px 0;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.bold-green {
+  background-color: #6aaa64;
+  color: white;
+  padding: 2px 5px;
+}
+
+.bold-yellow {
+  background-color: #c9b458;
+  color: white;
+  padding: 2px 5px;
+}
+
+.bold-gray {
+  background-color: #787c7e;
+  color: white;
+  padding: 2px 5px;
+}
+
+.row-game-over {
+  font-size: 24px;
+  margin-bottom: 10px;
+  padding: 5px 0;
+}
+
+.box-game-over {
+  width: 55px;
+  height: 55px;
+}
+
+.new-game-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: end;
+}
+
+.new-game-btn {
+  font-size: 16px;
+  padding: 10px 16px;
+  background-color: #1c7be7;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+}
+
+.new-game-btn:hover{
+  background-color: #1761b6;
+}
