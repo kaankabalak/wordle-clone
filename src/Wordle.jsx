@@ -363,7 +363,6 @@ function Wordle() {
   }
 
   function onModalClose() {
-    console.log("modal close");
     if (isHowToPlayOpen) {
       setHowToPlayOpen(false);
     }
