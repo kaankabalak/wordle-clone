@@ -143,7 +143,7 @@ const WORDS = [
 ];
 
 function Wordle() {
-  const [word, setWord] = useState(WORDS[Math.floor(Math.random() * WORDS.length)])
+  const [word, setWord] = useState(WORDS[Math.floor(Math.random() * WORDS.length)]);
   const [guesses, setGuesses] = useState(Array(6).fill(BLANK_GUESS));
   const [letters, setLetters] = useState(LETTERS);
   const [row, setRow] = useState(0);
@@ -319,7 +319,7 @@ function Wordle() {
       }
     }
 
-    if (remainingLetters === "     ") {
+    if (wordCopy === "     ") {
       return true;
     } else {
       return false;

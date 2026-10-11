@@ -45,7 +45,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 45px;
+  width: 40px;
   height: 60px;
   font-size: 20px;
   font-weight: bold;
@@ -53,24 +53,39 @@
   cursor: pointer;
 }
 
+@media screen and (max-width: 480px) {
+  .letter {
+    width: 30px;
+  }
+}
+
 .letter-gray {
   background-color: #787c7e;
   color: white;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .letter-yellow {
   background-color: #c9b458;
   color: white;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .letter-green {
   background-color: #6aaa64;
   color: white;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .letter-special {
-  width: 65px;
+  width: 60px;
   font-size: 12px;
+}
+
+@media screen and (max-width: 480px) {
+  .letter-special {
+    width: 45px;
+  }
 }
 
 .letter img {
